@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "Render/ShaderProgram.h";
+#include "res/ResourcesManager.h"
 
 struct size
 {
@@ -23,21 +24,10 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     gl::glViewport(0, 0, width, height);
 }
 
-const char* vertexShaderSource = "#version 330 core\n"
-"layout (location = 0)\n"
-"void main()\n"
-"{\n"
-"   gl_Position = vec4(1.0, 1.0, 1.0, 1.0);\n"
-"}\0";
-
-const char* fragmentShaderSource = "#version 330 core\n"
-"out vec3 FragColor;\n"
-"void main()\n"
-"{\n"
-"    FragColor = vec3(0.0, 1.0, 1.0);\n"
-"} \0";
 
 int main(int argc, char* argv[]) {
+
+
     size windowSize = { 640, 480 };
     glfwInit();
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
@@ -49,53 +39,67 @@ int main(int argc, char* argv[]) {
     gl::glClearColor(0, 0, 0, 1);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    float vertices[] = {
-    0.2f, 0.5f, 0.0f,
-     -0.2f, 0.2f, 0.0f,
-     0.2f, -0.2f, 0.0f,
+    const int verts = 4;
+
+    float polygons[verts * 6] = {
+        /*1*/         0.0f,  1.0f, 0.0f,  0.0f, 0.0f, 1.0f,
+        /*2*/         0.5f, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+        /*3*/        -0.5f, 0.0f, 0.0f,  0.0f, 1.0f, 0.0f,
+        /*4*/         0.0f,  -1.0f, 0.0f,  0.0f, 0.0f, 1.0f,
     };
-    const std::string vertexShader = vertexShaderSource;
-    const std::string fragmentShader = fragmentShaderSource;
 
-    Render::ShaderProgram shaderProgram(vertexShaderSource, fragmentShaderSource);
-    if (!shaderProgram.IsCompiled()) {
-        std::cerr << "Can't create shader program" << std::endl;
-        system("pause");
-    }
+    unsigned int indices[] = {
+        0, 1, 2,
+        1, 2, 3
+    };
 
-    unsigned int VBO, VAO;
-    gl::glGenVertexArrays(1, &VAO);
-    gl::glGenBuffers(1, &VBO);
-    gl::glBindVertexArray(VAO);
-    gl::glBindBuffer(gl::GL_ARRAY_BUFFER, VBO);
-    gl::glBufferData(gl::GL_ARRAY_BUFFER, sizeof(vertices), vertices, gl::GL_STATIC_DRAW);
+    {
+        ResourcesManager* manager = &ResourcesManager::Instance(argv[0]);
+        auto shaderProgram = manager->LoadShaders("DefaultShader", "Resources/Shaders/MyVertexShader.vert", "Resources/Shaders/MyFragmentShader.frag");
+
+        if (!shaderProgram->IsCompiled()) {
+            std::cerr << "Can't create shader program" << std::endl;
+            system("pause");
+        }
+
+        unsigned int VBO, VAO, EBO;
+        gl::glGenBuffers(1, &VBO);
+        gl::glGenBuffers(1, &EBO);
+        gl::glGenVertexArrays(1, &VAO);
+
+        gl::glBindVertexArray(VAO);
+        gl::glBindBuffer(gl::GL_ARRAY_BUFFER, VBO);
+        gl::glBufferData(gl::GL_ARRAY_BUFFER, sizeof(polygons), polygons, gl::GL_STATIC_DRAW);
+        gl::glBindBuffer(gl::GL_ELEMENT_ARRAY_BUFFER, EBO);
+        gl::glBufferData(gl::GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, gl::GL_STATIC_DRAW);
+
 #undef GL_FLOAT
-    gl::glVertexAttribPointer(0, 4, gl::GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    gl::glEnableVertexAttribArray(0);
-    gl::glBindBuffer(gl::GL_ARRAY_BUFFER, 0);
-    gl::glBindVertexArray(0);
+        gl::glVertexAttribPointer(0, 3, gl::GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+        gl::glEnableVertexAttribArray(0);
+#undef GL_FLOAT
+        gl::glVertexAttribPointer(1, 3, gl::GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+        gl::glEnableVertexAttribArray(1);
 
-    while (!glfwWindowShouldClose(window)) {
-        processInput(window);
+        gl::glBindBuffer(gl::GL_ARRAY_BUFFER, 0);
+        gl::glBindVertexArray(0);
+
+        while (!glfwWindowShouldClose(window)) {
+            processInput(window);
 
 #undef GL_COLOR_BUFFER_BIT 
-        gl::glClear(gl::GL_COLOR_BUFFER_BIT);
+            gl::glClear(gl::GL_COLOR_BUFFER_BIT);
 
-        float timeValue = glfwGetTime();
-        float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-        /*int vertexColorLocation = gl::glGetUniformLocation(shaderProgram, "vertexColor");
-        int vertexPositionLocation = gl::glGetUniformLocation(shaderProgram, "aPos");
-        gl::glUseProgram(shaderProgram);*/
-        shaderProgram.Use();
-        //gl::glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
-        //gl::glUniform3f(vertexPositionLocation, greenValue, greenValue, greenValue);
-        gl::glBindVertexArray(VAO);
+            shaderProgram->Use();
+            float timeValue = glfwGetTime();
+            gl::glBindVertexArray(VAO);
 #undef GL_TRIANGLES
-        gl::glDrawArrays(gl::GL_TRIANGLES, 0, 3);
+#undef GL_UNSIGNED_INT
+            gl::glDrawElements(gl::GL_TRIANGLES, 6, gl::GL_UNSIGNED_INT, 0);
 
-        //Another bullshit
-        glfwPollEvents();
-        glfwSwapBuffers(window);
+            //Another bullshit
+            glfwPollEvents();
+            glfwSwapBuffers(window);
+        }
+        glfwTerminate();
     }
-    glfwTerminate();
 }

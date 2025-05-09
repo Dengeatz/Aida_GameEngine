@@ -22,5 +22,5 @@ add_custom_command(TARGET Aida_GameEngine
     POST_BUILD 
     COMMAND ${CMAKE_COMMAND} -E copy_directory 
     ${CMAKE_SOURCE_DIR}/src/Resources 
-    $<TARGET_FILE_DIR:Aida_GameEngine>/res
+    $<TARGET_FILE_DIR:Aida_GameEngine>/Resources
 )

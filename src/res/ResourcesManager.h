@@ -1,0 +1,28 @@
+#pragma once
+#include <string>
+#include <memory>
+#include "../Render/ShaderProgram.h" 
+#include <map>
+
+
+class ResourcesManager {
+public:
+	static ResourcesManager& Instance(const std::string& path = "")
+	{
+		static ResourcesManager res(path);
+		return res;
+	}
+	std::shared_ptr<Render::ShaderProgram> LoadShaders(const std::string& shaderName, const std::string& vertexPath, const std::string& fragmentPath);
+	std::shared_ptr<Render::ShaderProgram> GetShaderProgram(const std::string& shaderName);
+private:
+	ResourcesManager(const std::string& path);
+	~ResourcesManager() = default;
+	ResourcesManager(const ResourcesManager&) = delete;
+	ResourcesManager& operator=(const ResourcesManager&) = delete;
+	ResourcesManager& operator=(ResourcesManager&&) = delete;
+	ResourcesManager(ResourcesManager&&) = delete;
+	std::string m_path;
+	std::string GetFileString(const std::string& relativeFilePath) const;
+	typedef std::map<const std::string, std::shared_ptr<Render::ShaderProgram>> ShaderProgramMap;
+	ShaderProgramMap m_shaders;
+};
