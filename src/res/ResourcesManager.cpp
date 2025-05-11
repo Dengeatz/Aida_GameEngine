@@ -5,6 +5,9 @@
 #include <fstream>
 #include <iostream>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 ResourcesManager::ResourcesManager(const std::string& path) 
 {
 	std::size_t found = path.find_last_of("/\\");
@@ -56,4 +59,21 @@ std::shared_ptr<Render::ShaderProgram> ResourcesManager::GetShaderProgram(const 
     }
     std::cerr << "ERROR::SHADER NOT FOUND! \n" << shaderName << std::endl;
     system("pause");
+}
+
+void ResourcesManager::LoadTexture(const std::string& name, const std::string& path)
+{
+    int channel = 0;
+    int width = 0;
+    int height = 0;
+
+    stbi_set_flip_vertically_on_load(true);
+    unsigned char* pixels = stbi_load(std::string(m_path + "/" + path).c_str(), &width, &height, &channel, 0);
+
+    if (!pixels) {
+        std::cerr << "ERROR::TEXTURE NOT FOUND!";
+        system("pause");
+    }
+
+    stbi_image_free(pixels);
 }

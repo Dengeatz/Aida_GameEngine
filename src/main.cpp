@@ -54,13 +54,15 @@ int main(int argc, char* argv[]) {
     };
 
     {
-        ResourcesManager* manager = &ResourcesManager::Instance(argv[0]);
-        auto shaderProgram = manager->LoadShaders("DefaultShader", "Resources/Shaders/MyVertexShader.vert", "Resources/Shaders/MyFragmentShader.frag");
+        auto resourcesManager = &ResourcesManager::Instance(argv[0]);
+        auto shaderProgram = resourcesManager->LoadShaders("DefaultShader", "Resources/Shaders/MyVertexShader.vert", "Resources/Shaders/MyFragmentShader.frag");
 
         if (!shaderProgram->IsCompiled()) {
             std::cerr << "Can't create shader program" << std::endl;
             system("pause");
         }
+
+        resourcesManager->LoadTexture("Default texture", "Resources/Textures/images.jpeg");
 
         unsigned int VBO, VAO, EBO;
         gl::glGenBuffers(1, &VBO);

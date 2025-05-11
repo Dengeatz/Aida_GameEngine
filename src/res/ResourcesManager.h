@@ -14,6 +14,7 @@ public:
 	}
 	std::shared_ptr<Render::ShaderProgram> LoadShaders(const std::string& shaderName, const std::string& vertexPath, const std::string& fragmentPath);
 	std::shared_ptr<Render::ShaderProgram> GetShaderProgram(const std::string& shaderName);
+	void LoadTexture(const std::string& name, const std::string& path);
 private:
 	ResourcesManager(const std::string& path);
 	~ResourcesManager() = default;
