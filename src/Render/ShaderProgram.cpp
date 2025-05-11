@@ -73,4 +73,9 @@ namespace Render {
     void ShaderProgram::Use() const {
         gl::glUseProgram(m_id);
     }
+
+    void ShaderProgram::SetTexture(const std::string& name, const gl::GLint value)
+    {
+        gl::glUniform1i(gl::glGetUniformLocation(m_id, name.c_str()), value);
+    }
 }

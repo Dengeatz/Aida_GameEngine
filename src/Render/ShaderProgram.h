@@ -11,7 +11,7 @@ namespace Render {
 		~ShaderProgram();
 		bool IsCompiled() const { return m_isCompiled; }
 		void Use() const;
-
+		void SetTexture(const std::string& name, const gl::GLint value);
 		ShaderProgram() = delete;
 		ShaderProgram(ShaderProgram&) = delete;
 		ShaderProgram& operator = (const ShaderProgram&) = delete;

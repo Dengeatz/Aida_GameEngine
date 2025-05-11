@@ -9,6 +9,8 @@ add_executable(Aida_GameEngine src/main.cpp
 	src/res/ResourcesManager.cpp
 	src/res/ResourcesManager.h
 	src/res/stb_image.h
+	src/Render/Texture2D.h
+	src/Render/Texture2D.cpp
 )
 
 list(APPEND CMAKE_PREFIX_PATH "src/graphics/glfw/lib/cmake")

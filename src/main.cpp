@@ -53,6 +53,13 @@ int main(int argc, char* argv[]) {
         1, 2, 3
     };
 
+    gl::GLfloat texCords[] = 
+    { 
+        0.5f, 1.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f
+    };
+
     {
         auto resourcesManager = &ResourcesManager::Instance(argv[0]);
         auto shaderProgram = resourcesManager->LoadShaders("DefaultShader", "Resources/Shaders/MyVertexShader.vert", "Resources/Shaders/MyFragmentShader.frag");
@@ -62,38 +69,46 @@ int main(int argc, char* argv[]) {
             system("pause");
         }
 
-        resourcesManager->LoadTexture("Default texture", "Resources/Textures/images.jpeg");
+        auto texture = resourcesManager->LoadTexture("Default texture", "Resources/Textures/images.jpeg");
 
-        unsigned int VBO, VAO, EBO;
+        unsigned int VBO, VAO, EBO, TBO;
         gl::glGenBuffers(1, &VBO);
         gl::glGenBuffers(1, &EBO);
         gl::glGenVertexArrays(1, &VAO);
+        gl::glGenBuffers(1, &TBO);
 
         gl::glBindVertexArray(VAO);
         gl::glBindBuffer(gl::GL_ARRAY_BUFFER, VBO);
+        gl::glBindBuffer(gl::GL_ARRAY_BUFFER, TBO);
         gl::glBufferData(gl::GL_ARRAY_BUFFER, sizeof(polygons), polygons, gl::GL_STATIC_DRAW);
         gl::glBindBuffer(gl::GL_ELEMENT_ARRAY_BUFFER, EBO);
         gl::glBufferData(gl::GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, gl::GL_STATIC_DRAW);
 
 #undef GL_FLOAT
-        gl::glVertexAttribPointer(0, 3, gl::GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
         gl::glEnableVertexAttribArray(0);
+        gl::glVertexAttribPointer(0, 3, gl::GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 #undef GL_FLOAT
-        gl::glVertexAttribPointer(1, 3, gl::GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
         gl::glEnableVertexAttribArray(1);
+        gl::glVertexAttribPointer(1, 3, gl::GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+#undef GL_FLOAT
+        gl::glEnableVertexAttribArray(2);
+        gl::glVertexAttribPointer(2, 2, gl::GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
         gl::glBindBuffer(gl::GL_ARRAY_BUFFER, 0);
         gl::glBindVertexArray(0);
+
+        shaderProgram->Use();
+        shaderProgram->SetTexture("tex", 0);
 
         while (!glfwWindowShouldClose(window)) {
             processInput(window);
 
 #undef GL_COLOR_BUFFER_BIT 
             gl::glClear(gl::GL_COLOR_BUFFER_BIT);
-
             shaderProgram->Use();
             float timeValue = glfwGetTime();
             gl::glBindVertexArray(VAO);
+            texture->Bind();
 #undef GL_TRIANGLES
 #undef GL_UNSIGNED_INT
             gl::glDrawElements(gl::GL_TRIANGLES, 6, gl::GL_UNSIGNED_INT, 0);
