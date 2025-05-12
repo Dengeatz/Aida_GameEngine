@@ -74,7 +74,7 @@ std::shared_ptr<Render::Texture2D> ResourcesManager::LoadTexture(const std::stri
         system("pause");
     }
 
-    std::shared_ptr<Render::Texture2D> texture = m_textures.emplace(textureName, std::make_shared<Render::Texture2D>(width, height, pixels, 3, gl::GL_NEAREST, gl::GL_CLAMP_TO_EDGE)).first->second;
+    std::shared_ptr<Render::Texture2D> texture = m_textures.emplace(textureName, std::make_shared<Render::Texture2D>(width, height, pixels, channel, gl::GL_NEAREST, gl::GL_CLAMP_TO_EDGE)).first->second;
     return texture;
     stbi_image_free(pixels);
 }

@@ -41,11 +41,11 @@ int main(int argc, char* argv[]) {
 
     const int verts = 4;
 
-    float polygons[verts * 6] = {
-        /*1*/         0.0f,  1.0f, 0.0f,  0.0f, 0.0f, 1.0f,
-        /*2*/         0.5f, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f,
-        /*3*/        -0.5f, 0.0f, 0.0f,  0.0f, 1.0f, 0.0f,
-        /*4*/         0.0f,  -1.0f, 0.0f,  0.0f, 0.0f, 1.0f,
+    float polygons[verts * 8] = {
+        /*1*/         0.0f,  1.0f, 0.0f,  0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+        /*2*/         0.5f, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+        /*3*/        -0.5f, 0.0f, 0.0f,  0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        /*4*/         0.0f,  -1.0f, 0.0f,  0.0f, 0.0f, 1.0f, 0.0f, 1.0f
     };
 
     unsigned int indices[] = {
@@ -53,12 +53,12 @@ int main(int argc, char* argv[]) {
         1, 2, 3
     };
 
-    gl::GLfloat texCords[] = 
-    { 
-        0.5f, 1.0f,
-        1.0f, 0.0f,
-        0.0f, 0.0f
-    };
+    //gl::GLfloat texCords[] = 
+    //{ 
+    //    0.5f, 1.0f,
+    //    1.0f, 0.0f,
+    //    0.0f, 0.0f
+    //};
 
     {
         auto resourcesManager = &ResourcesManager::Instance(argv[0]);
@@ -70,52 +70,49 @@ int main(int argc, char* argv[]) {
         }
 
         auto texture = resourcesManager->LoadTexture("Default texture", "Resources/Textures/images.jpeg");
-
-        unsigned int VBO, VAO, EBO, TBO;
+        auto textureSecond = resourcesManager->LoadTexture("Second texture", "Resources/Textures/awesomeface.png");
+        unsigned int VBO, VAO, EBO;
         gl::glGenBuffers(1, &VBO);
         gl::glGenBuffers(1, &EBO);
         gl::glGenVertexArrays(1, &VAO);
-        gl::glGenBuffers(1, &TBO);
 
         gl::glBindVertexArray(VAO);
         gl::glBindBuffer(gl::GL_ARRAY_BUFFER, VBO);
-        gl::glBindBuffer(gl::GL_ARRAY_BUFFER, TBO);
         gl::glBufferData(gl::GL_ARRAY_BUFFER, sizeof(polygons), polygons, gl::GL_STATIC_DRAW);
         gl::glBindBuffer(gl::GL_ELEMENT_ARRAY_BUFFER, EBO);
         gl::glBufferData(gl::GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, gl::GL_STATIC_DRAW);
 
 #undef GL_FLOAT
         gl::glEnableVertexAttribArray(0);
-        gl::glVertexAttribPointer(0, 3, gl::GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+        gl::glVertexAttribPointer(0, 3, gl::GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 #undef GL_FLOAT
         gl::glEnableVertexAttribArray(1);
-        gl::glVertexAttribPointer(1, 3, gl::GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+        gl::glVertexAttribPointer(1, 3, gl::GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 #undef GL_FLOAT
         gl::glEnableVertexAttribArray(2);
-        gl::glVertexAttribPointer(2, 2, gl::GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+        gl::glVertexAttribPointer(2, 2, gl::GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
         gl::glBindBuffer(gl::GL_ARRAY_BUFFER, 0);
         gl::glBindVertexArray(0);
 
         shaderProgram->Use();
         shaderProgram->SetTexture("tex", 0);
-
+        shaderProgram->SetTexture("texture2", 1);
         while (!glfwWindowShouldClose(window)) {
             processInput(window);
 
 #undef GL_COLOR_BUFFER_BIT 
             gl::glClear(gl::GL_COLOR_BUFFER_BIT);
+            texture->Bind();
+            textureSecond->Bind();
             shaderProgram->Use();
             float timeValue = glfwGetTime();
             gl::glBindVertexArray(VAO);
-            texture->Bind();
 #undef GL_TRIANGLES
 #undef GL_UNSIGNED_INT
             gl::glDrawElements(gl::GL_TRIANGLES, 6, gl::GL_UNSIGNED_INT, 0);
-
-            //Another bullshit
-            glfwPollEvents();
             glfwSwapBuffers(window);
+            glfwPollEvents();
         }
         glfwTerminate();
     }

@@ -20,7 +20,7 @@ namespace Render
 		Texture2D& operator = (const Texture2D&) = delete;
 		Texture2D& operator = (Texture2D&& texture2d);
 		Texture2D(Texture2D&& texture2d);
-
+		void SetMultipleTextures(const Texture2D&, const gl::GLuint id);
 		void Bind() const;
 
 	private:
