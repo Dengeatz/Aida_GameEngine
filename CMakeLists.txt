@@ -18,6 +18,7 @@ find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
 target_link_libraries(Aida_GameEngine OpenGL::GL)
 target_link_libraries(Aida_GameEngine glfw)
+include_directories(src/mathematics/glm)
 
 set_target_properties(Aida_GameEngine PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
 

@@ -6,6 +6,10 @@
 #include "Render/ShaderProgram.h";
 #include "res/ResourcesManager.h"
 
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
+
 struct size
 {
 public:
@@ -53,13 +57,6 @@ int main(int argc, char* argv[]) {
         1, 2, 3
     };
 
-    //gl::GLfloat texCords[] = 
-    //{ 
-    //    0.5f, 1.0f,
-    //    1.0f, 0.0f,
-    //    0.0f, 0.0f
-    //};
-
     {
         auto resourcesManager = &ResourcesManager::Instance(argv[0]);
         auto shaderProgram = resourcesManager->LoadShaders("DefaultShader", "Resources/Shaders/MyVertexShader.vert", "Resources/Shaders/MyFragmentShader.frag");
@@ -71,6 +68,7 @@ int main(int argc, char* argv[]) {
 
         auto texture = resourcesManager->LoadTexture("Default texture", "Resources/Textures/images.jpeg");
         auto textureSecond = resourcesManager->LoadTexture("Second texture", "Resources/Textures/awesomeface.png");
+
         unsigned int VBO, VAO, EBO;
         gl::glGenBuffers(1, &VBO);
         gl::glGenBuffers(1, &EBO);
