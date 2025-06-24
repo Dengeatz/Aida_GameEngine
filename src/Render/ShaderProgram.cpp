@@ -2,6 +2,8 @@
 #include <glbinding/gl/functions.h>
 #include <glbinding/gl/enum.h>
 #include <iostream>
+#include <glm.hpp>
+#include <gtc/type_ptr.hpp>
 
 namespace Render {
 	ShaderProgram::ShaderProgram(const std::string& vertexShader, const std::string& fragmentShader)
@@ -77,5 +79,10 @@ namespace Render {
     void ShaderProgram::SetTexture(const std::string& name, const gl::GLint value)
     {
         gl::glUniform1i(gl::glGetUniformLocation(m_id, name.c_str()), value);
+    }
+
+    void ShaderProgram::SetUniformMax4fv(const std::string& name, const glm::mat4& matrix)
+    {
+        gl::glUniformMatrix4fv(gl::glGetUniformLocation(m_id, name.c_str()), 1, gl::GL_FALSE, glm::value_ptr(matrix));
     }
 }

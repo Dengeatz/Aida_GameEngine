@@ -96,6 +96,12 @@ int main(int argc, char* argv[]) {
         shaderProgram->Use();
         shaderProgram->SetTexture("tex", 0);
         shaderProgram->SetTexture("texture2", 1);
+
+        glm::mat4 trans = glm::mat4(1.0f);
+        trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+        trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+
+        shaderProgram->SetUniformMax4fv("transform", trans);
         while (!glfwWindowShouldClose(window)) {
             processInput(window);
 

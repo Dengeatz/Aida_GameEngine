@@ -3,6 +3,7 @@
 #include <string>
 #include <glbinding/gl/types.h>
 #include <glbinding/gl/enum.h>
+#include <glm.hpp>
 
 namespace Render {
 	class ShaderProgram {
@@ -12,6 +13,7 @@ namespace Render {
 		bool IsCompiled() const { return m_isCompiled; }
 		void Use() const;
 		void SetTexture(const std::string& name, const gl::GLint value);
+		void SetUniformMax4fv(const std::string& name, const glm::mat4& matrix);
 		ShaderProgram() = delete;
 		ShaderProgram(ShaderProgram&) = delete;
 		ShaderProgram& operator = (const ShaderProgram&) = delete;
