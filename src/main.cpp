@@ -17,10 +17,41 @@ public:
     int height;
 };
 
+float horizontalAxis = 0.0f;
+float verticalAxis = 0.0f;
+
 void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) 
+    {
+        if (verticalAxis == 1.0f || verticalAxis == -1.0f) return;
+
+        verticalAxis += 0.0001f;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) 
+    {
+        if (verticalAxis == 1.0f || verticalAxis == -1.0f) return;
+
+        verticalAxis += -0.0001f;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) 
+    {
+        if (horizontalAxis == 1.0f || horizontalAxis == -1.0f) return;
+
+        horizontalAxis += 0.0001f;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) 
+    {
+        if (horizontalAxis == 1.0f || horizontalAxis == -1.0f) return;
+
+        horizontalAxis += -0.0001f;
+    }
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -30,8 +61,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 
 int main(int argc, char* argv[]) {
-
-
     size windowSize = { 640, 480 };
     glfwInit();
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
@@ -97,11 +126,7 @@ int main(int argc, char* argv[]) {
         shaderProgram->SetTexture("tex", 0);
         shaderProgram->SetTexture("texture2", 1);
 
-        glm::mat4 trans = glm::mat4(1.0f);
-        trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
-        trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
 
-        shaderProgram->SetUniformMax4fv("transform", trans);
         while (!glfwWindowShouldClose(window)) {
             processInput(window);
 
@@ -109,7 +134,14 @@ int main(int argc, char* argv[]) {
             gl::glClear(gl::GL_COLOR_BUFFER_BIT);
             texture->Bind();
             textureSecond->Bind();
+            glm::mat4 trans = glm::mat4(1.0f);
+            //glm::vec4 position = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+            trans = glm::translate(trans, glm::vec3(-horizontalAxis, verticalAxis, 0.0f));
+            trans = glm::rotate(trans, glm::radians(float(glfwGetTime()) * 20), glm::vec3(0.0, 0.0, 1.0));
+            trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+            shaderProgram->SetUniformMax4fv("transform", trans);
             shaderProgram->Use();
+
             float timeValue = glfwGetTime();
             gl::glBindVertexArray(VAO);
 #undef GL_TRIANGLES

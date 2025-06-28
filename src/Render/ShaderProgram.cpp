@@ -85,4 +85,10 @@ namespace Render {
     {
         gl::glUniformMatrix4fv(gl::glGetUniformLocation(m_id, name.c_str()), 1, gl::GL_FALSE, glm::value_ptr(matrix));
     }
+    
+    //void ShaderProgram::SetUniformVec4fv(const std::string& name, const glm::vec4& matrix)
+    //{
+    //    gl::glUniform4fv(gl::glGetUniformLocation(m_id, name.c_str()), 1, )
+    //}
+
 }

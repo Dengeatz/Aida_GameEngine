@@ -14,6 +14,7 @@ namespace Render {
 		void Use() const;
 		void SetTexture(const std::string& name, const gl::GLint value);
 		void SetUniformMax4fv(const std::string& name, const glm::mat4& matrix);
+		void SetUniformVec4fv(const std::string& name, const glm::vec4& matrix);
 		ShaderProgram() = delete;
 		ShaderProgram(ShaderProgram&) = delete;
 		ShaderProgram& operator = (const ShaderProgram&) = delete;
